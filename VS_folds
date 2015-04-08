@@ -1,0 +1,39 @@
+######################################################################
+#set number of folds (max=9)
+numFolds=5
+######################################################################
+
+attach(Data)
+categories=as.character(unique(class))
+numCat=length(categories)
+
+folds=list(0)
+for (m in 1:(numFolds-1)){
+  folds=c(folds, list(0))
+} 
+
+for (j in 1:numCat){
+  images=Data[class==categories[j],2]
+  size=length(images)
+  scrambled=sample(images, size)
+
+  x=floor(size/numFolds)
+  y=size%%numFolds
+  #numFolds+1 so no special case in loop below for end=inc[k+1]
+  inc=rep(x, numFolds+1)
+  inc[1:y]=inc[1:y]+1
+   
+  start=1
+  end=inc[1]
+  for (k in 1:numFolds){
+    folds[[k]]=c(folds[[k]], scrambled[start:end])
+    start=end+1
+    end=end+inc[k+1] 
+  }
+}
+
+for (i in 1:numFolds){
+  folds[[i]]=folds[[i]][-1]
+}
+
+detach(Data)
