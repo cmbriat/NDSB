@@ -1,0 +1,26 @@
+WDpath="C:/Users/cactus/Desktop/WD"
+
+fileName="final_prob_matrix.txt"
+input=paste(WDpath, fileName, sep="/")
+sub=read.table(input, header=TRUE, sep="\t")
+
+######################################################################
+
+n=nrow(sub)
+x=rownames(sub)
+y=rep(0, n)
+
+for (i in 1:n){
+  y[i]=paste(x[i], ".jpg", sep="") 
+}
+
+rownames(sub)=y
+
+
+fileName="submission.csv"
+output=paste(WDpath, fileName, sep="/")
+write.csv(sub, output)
+
+######################################################################
+#change shrimp.like_other to shrimp-like_other
+#add image for first column name
