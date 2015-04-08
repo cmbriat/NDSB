@@ -1,0 +1,30 @@
+######################################################################
+#set proportion of test set:
+prop=1/2
+#if odd number, training gets extra
+######################################################################
+
+attach(Data)
+categories=as.character(unique(class))
+numCat=length(categories)
+
+dist=rep(0, numCat)
+for (i in 1:numCat){
+dist[i]=length(class[class==categories[i]])
+}
+
+trainData=Data[1,]
+testData=Data[1,]
+
+for (j in 1:numCat){
+  entireClass=Data[class==categories[j],]
+  size=nrow(entireClass)
+  test=sample(1:size, prop*size, replace=FALSE)
+  train=-test
+  trainData=rbind(trainData, entireClass[train,])
+  testData=rbind(testData, entireClass[test,])
+}
+
+trainData=trainData[-1,]
+testData=testData[-1,]
+detach(Data)
