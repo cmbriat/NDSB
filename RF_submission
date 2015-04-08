@@ -1,0 +1,68 @@
+WDpath="C:/Users/cactus/Desktop/WD"
+getData.path="C:/Users/cactus/Desktop/kaggle/code/2_get_data.txt"
+getTest.path="C:/Users/cactus/Desktop/kaggle/code/6_get_test.txt"
+
+library(randomForest)
+source(getData.path)
+source(getTest.path)
+
+######################################################################
+
+###
+i=10
+###
+
+set.seed(i) 
+fit=randomForest(class~., Data[,-2], mtry=26, ntree=1000)
+prob.matrix=predict(fit, Test[,c(-1,-2)], type="prob")
+
+rownames(prob.matrix)=Test[,2]
+
+fileName=paste("prob_matrix", i, sep="")
+fileName=paste(fileName, ".txt", sep="")
+out=paste(WDpath, fileName, sep="/")
+write.table(prob.matrix, out, sep="\t")
+
+######################################################################
+
+WDpath="C:/Users/cactus/Desktop/WD"
+
+file1="prob_matrix1.txt"
+file2="prob_matrix2.txt"
+file3="prob_matrix3.txt"
+file4="prob_matrix4.txt"
+file5="prob_matrix5.txt"
+file6="prob_matrix6.txt"
+file7="prob_matrix7.txt"
+file8="prob_matrix8.txt"
+file9="prob_matrix9.txt"
+file10="prob_matrix10.txt"
+
+get_file1=paste(WDpath, file1, sep="/")
+get_file2=paste(WDpath, file2, sep="/")
+get_file3=paste(WDpath, file3, sep="/")
+get_file4=paste(WDpath, file4, sep="/")
+get_file5=paste(WDpath, file5, sep="/")
+get_file6=paste(WDpath, file6, sep="/")
+get_file7=paste(WDpath, file7, sep="/")
+get_file8=paste(WDpath, file8, sep="/")
+get_file9=paste(WDpath, file9, sep="/")
+get_file10=paste(WDpath, file10, sep="/")
+
+mat1=read.table(get_file1, header=TRUE, sep="\t")
+mat2=read.table(get_file2, header=TRUE, sep="\t")
+mat3=read.table(get_file3, header=TRUE, sep="\t")
+mat4=read.table(get_file4, header=TRUE, sep="\t")
+mat5=read.table(get_file5, header=TRUE, sep="\t")
+mat6=read.table(get_file6, header=TRUE, sep="\t")
+mat7=read.table(get_file7, header=TRUE, sep="\t")
+mat8=read.table(get_file8, header=TRUE, sep="\t")
+mat9=read.table(get_file9, header=TRUE, sep="\t")
+mat10=read.table(get_file10, header=TRUE, sep="\t")
+
+prob.matrix=(mat1+mat2+mat3+mat4+mat5+mat6+mat7+mat8+mat9+mat10)/10
+
+
+fileName="final_prob_matrix10.txt"
+output=paste(WDpath, fileName, sep="/")
+write.table(prob.matrix, output, sep="\t")
