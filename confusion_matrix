@@ -1,0 +1,47 @@
+WDpath="C:/Users/cactus/Desktop/WD"
+
+fileName="final_prob_matrix.txt"
+input=paste(WDpath, fileName, sep="/")
+prob.matrix=read.table(input, header=TRUE, sep="\t")
+
+fileName="testClass.txt"
+input=paste(WDpath, fileName, sep="/")
+testClass=read.table(input, header=TRUE, sep="\t")
+
+#rows are predicted, cols are actual
+
+######################################################################
+
+testClass=as.character(testClass[,1])
+
+index=which(colnames(prob.matrix)=="shrimp.like_other")
+if (length(index)!=0){
+  colnames(prob.matrix)[index]="shrimp-like_other"
+}
+
+n=nrow(prob.matrix)
+categories=colnames(prob.matrix)
+numCat=length(categories)
+pred=rep("o", n)
+
+for (j in 1:n){
+  index=which.max(prob.matrix[j,])
+  pred[j]=categories[index]
+}
+
+results=matrix(0, numCat, numCat)
+colnames(results)=categories
+rownames(results)=categories
+
+for (i in 1:n){
+  actual=testClass[i]
+  predicted=pred[i]
+
+  results[predicted, actual]=results[predicted, actual]+1
+}
+
+
+
+fileName="confusion_matrix.txt"
+output=paste(WDpath, fileName, sep="/")
+write.table(results, output, sep="\t")
