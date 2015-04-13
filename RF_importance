@@ -1,0 +1,35 @@
+WDpath="C:/Users/cactus/Desktop/WD"
+
+getData.path="C:/Users/cactus/Desktop/kaggle/code/4_get_data.txt"
+
+######################################################################
+
+set.seed(1)
+library(randomForest)
+
+source(getData.path)
+
+fit=randomForest(class~., Data[,-2], mtry=5, ntree=500)
+
+
+x=importance(fit, type=2)
+y=data.frame(rownames(x), x)
+results=y[order(-y[,2]),]
+rownames(results)=NULL
+colnames(results)=c("Predictor", "MeanDecreaseGini")
+
+fileName="importance_list.txt"
+output=paste(WDpath, fileName, sep="/")
+write.table(results, output, sep="\t")
+
+
+
+
+n=ncol(Data)
+n=n-2
+
+fileName="importance.jpg"
+output=paste(WDpath, fileName, sep="/")
+jpeg(output)
+varImpPlot(fit, n.var=n)
+dev.off()
