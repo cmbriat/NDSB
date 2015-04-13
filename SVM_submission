@@ -1,0 +1,23 @@
+WDpath="C:/Users/cactus/Desktop/WD"
+getData.path="C:/Users/cactus/Desktop/kaggle/code/2_get_data.txt"
+getTest.path="C:/Users/cactus/Desktop/kaggle/code/6_get_test.txt"
+removeWorst.path="C:/Users/cactus/Desktop/kaggle/code/5_remove_worst.txt"
+
+source(getData.path)
+source(getTest.path)
+source(removeWorst.path)
+
+######################################################################
+
+set.seed(1)
+library(e1071)
+
+fit=svm(class~., Data[,-2], kernel="radial", gamma=0.004, cost=4, prob=TRUE, scale=TRUE)
+pred=predict(fit, Test[,,c(-1,-2)], prob=TRUE)
+prob.matrix=attributes(pred)$probabilities
+
+rownames(prob.matrix)=Test[,2]
+
+fileName="final_prob_matrix.txt"
+out=paste(WDpath, fileName, sep="/")
+write.table(prob.matrix, out, sep="\t")
