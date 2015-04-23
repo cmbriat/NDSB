@@ -1,3 +1,6 @@
+#average 10 RF models together
+#run step 1 and step 2 separatly (for memory issues)
+
 WDpath="C:/Users/cactus/Desktop/WD"
 getData.path="C:/Users/cactus/Desktop/kaggle/code/2_get_data.txt"
 getTest.path="C:/Users/cactus/Desktop/kaggle/code/6_get_test.txt"
@@ -7,23 +10,29 @@ source(getData.path)
 source(getTest.path)
 
 ######################################################################
+#step 1:
+#fit RF 10 times with different seeds
+#run this in parallel for faster results
 
-###
-i=10
-###
+#set different value of i each time:
+i=1
 
 set.seed(i) 
 fit=randomForest(class~., Data[,-2], mtry=26, ntree=1000)
 prob.matrix=predict(fit, Test[,c(-1,-2)], type="prob")
 
+#save prob matrix
 rownames(prob.matrix)=Test[,2]
-
 fileName=paste("prob_matrix", i, sep="")
 fileName=paste(fileName, ".txt", sep="")
 out=paste(WDpath, fileName, sep="/")
 write.table(prob.matrix, out, sep="\t")
 
 ######################################################################
+#step 2:
+#load all prob matrices (here there are 10)
+#average them together
+#save resulting prob matrix
 
 WDpath="C:/Users/cactus/Desktop/WD"
 
@@ -61,7 +70,6 @@ mat9=read.table(get_file9, header=TRUE, sep="\t")
 mat10=read.table(get_file10, header=TRUE, sep="\t")
 
 prob.matrix=(mat1+mat2+mat3+mat4+mat5+mat6+mat7+mat8+mat9+mat10)/10
-
 
 fileName="final_prob_matrix10.txt"
 output=paste(WDpath, fileName, sep="/")
