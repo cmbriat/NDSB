@@ -1,4 +1,8 @@
+#add ".jpg" to each image number
+
 WDpath="C:/Users/cactus/Desktop/WD"
+
+#input required (prob matrix):
 
 fileName="final_prob_matrix.txt"
 input=paste(WDpath, fileName, sep="/")
@@ -10,17 +14,18 @@ n=nrow(sub)
 x=rownames(sub)
 y=rep(0, n)
 
+#add ".jpg" to each image number
 for (i in 1:n){
   y[i]=paste(x[i], ".jpg", sep="") 
 }
-
 rownames(sub)=y
 
-
+#save output as csv file
 fileName="submission.csv"
 output=paste(WDpath, fileName, sep="/")
 write.csv(sub, output)
 
 ######################################################################
+#manual formatting required:
 #change shrimp.like_other to shrimp-like_other
 #add image for first column name
