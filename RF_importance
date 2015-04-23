@@ -1,5 +1,7 @@
-WDpath="C:/Users/cactus/Desktop/WD"
+#create importance plots from RF
+#output importance list and plot
 
+WDpath="C:/Users/cactus/Desktop/WD"
 getData.path="C:/Users/cactus/Desktop/kaggle/code/4_get_data.txt"
 
 ######################################################################
@@ -7,27 +9,27 @@ getData.path="C:/Users/cactus/Desktop/kaggle/code/4_get_data.txt"
 set.seed(1)
 library(randomForest)
 
+#get data
 source(getData.path)
 
+#fit RF
 fit=randomForest(class~., Data[,-2], mtry=5, ntree=500)
 
-
+#get importance info
 x=importance(fit, type=2)
 y=data.frame(rownames(x), x)
 results=y[order(-y[,2]),]
 rownames(results)=NULL
 colnames(results)=c("Predictor", "MeanDecreaseGini")
 
+#output importance list
 fileName="importance_list.txt"
 output=paste(WDpath, fileName, sep="/")
 write.table(results, output, sep="\t")
 
-
-
-
+#output importance plot
 n=ncol(Data)
 n=n-2
-
 fileName="importance.jpg"
 output=paste(WDpath, fileName, sep="/")
 jpeg(output)
