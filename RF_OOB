@@ -1,7 +1,7 @@
 #fit a random forest model to entire training set
 #use out-of-bag estimations
 #print logloss and accuracy
-#save prob matrix, test labels, and confusion matrix
+#output prob matrix, test labels, and confusion matrix
 
 WDpath="C:/Users/cactus/Desktop/WD"
 getData.path="C:/Users/cactus/Desktop/kaggle/code/2_get_data.txt"
