@@ -1,3 +1,5 @@
+#produce a stratified training and test set
+
 ######################################################################
 #set proportion of test set:
 prop=1/2
@@ -8,14 +10,17 @@ attach(Data)
 categories=as.character(unique(class))
 numCat=length(categories)
 
+#calculate class distribution
 dist=rep(0, numCat)
 for (i in 1:numCat){
 dist[i]=length(class[class==categories[i]])
 }
 
+#initialize training and test sets
 trainData=Data[1,]
 testData=Data[1,]
 
+#for each category:
 for (j in 1:numCat){
   entireClass=Data[class==categories[j],]
   size=nrow(entireClass)
@@ -25,6 +30,7 @@ for (j in 1:numCat){
   testData=rbind(testData, entireClass[test,])
 }
 
+#remove initialization elt
 trainData=trainData[-1,]
 testData=testData[-1,]
 detach(Data)
