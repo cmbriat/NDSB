@@ -1,4 +1,9 @@
+#compute performance statistics for each class
+#save output
+
 WDpath="C:/Users/cactus/Desktop/WD"
+
+#inputs required (prob matrix and test labels):
 
 fileName="prob_matrix.txt"
 input=paste(WDpath, fileName, sep="/")
@@ -8,12 +13,11 @@ fileName="testClass.txt"
 input=paste(WDpath, fileName, sep="/")
 testClass=read.table(input, header=TRUE, sep="\t")
 
-#do something better than dist=results[,3]
-
 ######################################################################
 
 testClass=as.character(testClass[,1])
 
+#fix some formatting issues
 index=which(colnames(prob.matrix)=="shrimp.like_other")
 if (length(index)!=0){
   colnames(prob.matrix)[index]="shrimp-like_other"
@@ -25,6 +29,7 @@ numCat=length(categories)
 pred=rep("o", n)
 highestProb=rep(0,n)
 
+#get predictions from prob matrix
 for (j in 1:n){
   index=which.max(prob.matrix[j,])
   pred[j]=categories[index]
@@ -35,6 +40,7 @@ results=matrix(0, numCat, 7)
 rownames(results)=categories
 colnames(results)=c("logloss", "accuracy", "test_class_total", "conf_mean", "conf_sd", "conf_min", "conf_max")
 
+#compute statistics for each class
 for (i in 1:numCat){
   ind=which(testClass==categories[i])
   sum=0
@@ -53,17 +59,17 @@ for (i in 1:numCat){
   results[i,6]=summary[1]
   results[i,7]=summary[6]
 }
-
 dist=results[,3]
 A=sum(results[,2]*dist)/sum(dist)
 L=sum(results[,1]*dist)/sum(dist)
 
+#output A and L to console
 phrase1=paste("accuracy", round(A,4)*100, sep=" = ")
 phrase2=paste("logloss", round(L,3), sep=" = ")
 print(phrase1)
 print(phrase2)
 
-
+#save file
 fileName="by_class.txt"
 output=paste(WDpath, fileName, sep="/")
 write.table(results, output, sep="\t")
