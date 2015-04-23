@@ -1,5 +1,9 @@
-WDpath="C:/Users/cactus/Desktop/WD"
+#fit a random forest model to entire training set
+#use out-of-bag estimations
+#print logloss and accuracy
+#save prob matrix, test labels, and confusion matrix
 
+WDpath="C:/Users/cactus/Desktop/WD"
 getData.path="C:/Users/cactus/Desktop/kaggle/code/2_get_data.txt"
 removeWorst.path="C:/Users/cactus/Desktop/kaggle/code/5_remove_worst.txt"
 
@@ -8,9 +12,13 @@ removeWorst.path="C:/Users/cactus/Desktop/kaggle/code/5_remove_worst.txt"
 set.seed(1)
 library(randomForest)
 
+#load data
 source(getData.path)
+
+#remove worst predictors
 source(removeWorst.path)
 
+#fit model
 fit=randomForest(class~., Data[,-2], mtry=try, ntree=500)
 
 prob.matrix=fit$votes
@@ -23,6 +31,7 @@ n=nrow(prob.matrix)
 testClass=as.character(Data[,1])
 confusion=table(pred, testClass)
 
+#compute logloss and accuracy
 sum=0
 for (i in 1:n){
   trueClass=testClass[i]
@@ -30,17 +39,18 @@ for (i in 1:n){
   p=max(min(p,1-10^(-15)),10^(-15))
   sum=sum+log(p)
 }
-
 L=-1/n*sum
 A=mean(pred==testClass)
 
+#print logloss and accuracy
 phrase1=paste("accuracy", round(A,4)*100, sep=" = ")
 phrase2=paste("logloss", round(L,3), sep=" = ")
 print(phrase1)
 print(phrase2)
-
 print("OOB, direct computations")
 
+
+#create 3 output files:
 
 fileName="prob_matrix.txt"
 out=paste(WDpath, fileName, sep="/")
