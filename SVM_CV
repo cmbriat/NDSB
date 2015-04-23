@@ -1,5 +1,7 @@
-WDpath="C:/Users/cactus/Desktop/WD"
+#perform cross validation on SVM
+#note we call another file to create folds
 
+WDpath="C:/Users/cactus/Desktop/WD"
 getData.path="C:/Users/cactus/Desktop/kaggle/code/2_get_data.txt"
 getValidationSets.path="C:/Users/cactus/Desktop/kaggle/code/VS_folds.txt"
 
@@ -9,28 +11,36 @@ set.seed(1)
 library(e1071)
 library(utils)
 
+#load data
 source(getData.path)
+
+#get folds
 source(getValidationSets.path)
 
 results=matrix(0, numFolds, 2)
 colnames(results)=c("logloss", "accuracy")
 
+#set up progress bar
 pb=winProgressBar(title="progress bar", min=0, max=numFolds, width=300)
 progress=0
 
+#iterate for each fold
 for (c in 1:numFolds){
+  #get test and training sets
   images=folds[[c]]
   test=which(Data$image %in% images)
   testData=Data[test,]
   trainData=Data[-test,]
 
+  #fit model
   fit=svm(class~., trainData[,-2], kernel="radial", cost=5, gamma=0.06, prob=TRUE, scale=TRUE)
   pred=predict(fit, testData[,-2], prob=TRUE)
   prob.matrix=attributes(pred)$probabilities
 
   n=nrow(prob.matrix)
   testClass=as.character(testData[,1])
-
+  
+  #compute logloss and accuracy
   sum=0
   for (i in 1:n){
     trueClass=testClass[i]
@@ -38,7 +48,6 @@ for (c in 1:numFolds){
     p=max(min(p,1-10^(-15)),10^(-15))
     sum=sum+log(p)
   }
-  
   results[c,1]=-1/n*sum
   results[c,2]=mean(pred==testClass)
 
@@ -46,6 +55,7 @@ for (c in 1:numFolds){
   rm(pred)
   rm(prob.matrix)
 
+  #increment progress bar
   progress=progress+1
   setWinProgressBar(pb, progress, title=paste(round(progress/numFolds*100, 0), "% done"))
 }
@@ -54,14 +64,14 @@ close(pb)
 L=mean(results[,1])
 A=mean(results[,2])
 
+#print results to console
 phrase1=paste("accuracy", round(A,4)*100, sep=" = ")
 phrase2=paste("logloss", round(L,3), sep=" = ")
 print(phrase1)
 print(phrase2)
-
 print("CV, direct computations")
 
-
+#save results
 fileName="SVM_CV.txt"
 out=paste(WDpath, fileName, sep="/")
 write.table(results, out, sep="\t")
