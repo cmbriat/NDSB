@@ -1,0 +1,12 @@
+#if need to remove specific predictors:
+
+#make a list of predictors to be removed
+x=c()
+
+#remove them
+l=length(x)
+if (l!=0){
+  for (i in 1:l){
+    Shapes[,x[i]]=NULL
+  }
+}
