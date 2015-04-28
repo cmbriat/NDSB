@@ -1,0 +1,37 @@
+##################
+#source file paths
+##################
+getData.path="C:/Users/cactus/Desktop/kaggle/code/get_data.txt"
+getValidationSets.path="C:/Users/cactus/Desktop/kaggle/code/split_then_balance.txt"
+
+#needs to have produced trainData, testData
+
+
+##################
+#settings
+##################
+#set k value of KNN:
+bestK=29
+#need to know that "class" is in col1, "image" is in col2
+##################
+
+set.seed(1)
+
+source(getData.path)
+source(getValidationSets.path)
+
+library(kknn)
+fit=kknn(class~., trainData[,-2], testData[,-2], k=bestK, distance=2, kernel="rectangular", scale=TRUE)
+
+matrix=fit$C
+n=nrow(matrix)
+
+results=matrix(0, n, bestK)
+rownames(results)=testData[,2]
+
+for (i in 1:n){
+indices=matrix[i,]
+results[i,]=trainData[indices,2]
+}
+
+write.table(results, "neighbor_matrix.txt", sep="\t")
