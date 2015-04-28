@@ -1,0 +1,55 @@
+WDpath="C:/Users/cactus/Desktop/WD"
+
+getData.path="C:/Users/cactus/Desktop/kaggle/code/2_get_data.txt"
+removeWorst.path="C:/Users/cactus/Desktop/kaggle/code/5_remove_worst.txt"
+getValidationSets.path="C:/Users/cactus/Desktop/kaggle/code/VS_stratified.txt"
+
+######################################################################
+
+set.seed(1)
+library(RSNNS)
+
+source(getData.path)
+source(removeWorst.path)
+source(getValidationSets.path)
+
+#class is a factor (good)
+
+fit=mlp(trainData[,c(-1,-2)], trainData[,1], size=c(10,10), maxit=100)
+prob.matrix=predict(fit, testData[,-2], prob=TRUE)
+pred=predict(fit, testData[,-2], type="class")
+
+n=nrow(prob.matrix)
+testClass=as.character(testData[,1])
+confusion=table(pred, testClass)
+
+sum=0
+for (i in 1:n){
+  trueClass=testClass[i]
+  p=prob.matrix[i,trueClass]
+  p=max(min(p,1-10^(-15)),10^(-15))
+  sum=sum+log(p)
+}
+
+L=-1/n*sum
+A=mean(pred==testClass)
+
+phrase1=paste("accuracy", round(A,4)*100, sep=" = ")
+phrase2=paste("logloss", round(L,3), sep=" = ")
+print(phrase1)
+print(phrase2)
+
+print("stratified sample, direct computations")
+
+
+fileName="prob_matrix.txt"
+out=paste(WDpath, fileName, sep="/")
+#write.table(prob.matrix, out, sep="\t")
+
+fileName="testClass.txt"
+out=paste(WDpath, fileName, sep="/")
+#write.table(testClass, out, sep="\t")
+
+fileName="confusion_matrix.txt"
+out=paste(WDpath, fileName, sep="/")
+#write.table(confusion, out, sep="\t")
