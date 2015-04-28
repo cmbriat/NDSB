@@ -55,12 +55,3 @@ Data15=read.csv(get_file15)
 ##################################################
 
 Shapes=cbind(Data1, Data2[,c(-1,-2)], Data3[,c(-1,-2)], Data4[,c(-1,-2)], Data5[,c(-1,-2)], Data6[,c(-1,-2)], Data7[,c(-1,-2)], Data8[,c(-1,-2)], Data9[,c(-1,-2)], Data10[,c(-1,-2)], Data11[,c(-1,-2)], Data12[,c(-1,-2)], Data13[,c(-1,-2)], Data14[,c(-1,-2)], Data15[,c(-1,-2)])
-
-#if need to remove specific predictors:
-x=c() #put predictors here
-l=length(x)
-if (l!=0){
-  for (i in 1:l){
-    Shapes[,x[i]]=NULL
-  }
-}
