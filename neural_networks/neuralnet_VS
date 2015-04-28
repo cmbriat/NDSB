@@ -1,0 +1,84 @@
+WDpath="C:/Users/cactus/Desktop/WD"
+
+getData.path="C:/Users/cactus/Desktop/kaggle/code/2_get_data.txt"
+removeWorst.path="C:/Users/cactus/Desktop/kaggle/code/5_remove_worst.txt"
+getValidationSets.path="C:/Users/cactus/Desktop/kaggle/code/VS_stratified.txt"
+
+######################################################################
+
+set.seed(1)
+library(neuralnet)
+
+source(getData.path)
+source(removeWorst.path)
+source(getValidationSets.path)
+
+#class is a factor (good)
+
+names=names(trainData)
+equ=paste(names[c(-1,-2)], collapse="+")
+equ=paste(names[1], equ, sep="~")
+
+num=2*(267+1)*2*(2+1)*121*(2+1)
+W=runif(num, -0.5, 0.5)
+
+for (i in 1:(length(names)-2)){
+  trainData[,i+2]=as.numeric(trainData[,i+2])
+  testData[,i+2]=as.numeric(testData[,i+2])
+}
+
+n=nrow(Data)
+categories=as.character(unique(Data$class))
+numCat=length(categories)
+for (j in 1:n){
+  trainData[j,1]=cat
+  ind=which(categories==cat)
+  trainData[j,1]=ind
+
+  testData[j,1]=cat
+  ind=which(categories==cat)
+  testData[j,1]=ind
+}
+
+fit=neuralnet(equ, trainData[,-2], hidden=c(10,10))
+
+pred=compute(fit, testData[,c(-1, -2)])$net.result
+
+
+prob.matrix=prediction(fit, testData[,c(-1,-2)])
+pred=predict(fit, testData[,-2], type="class")
+
+n=nrow(prob.matrix)
+testClass=as.character(testData[,1])
+confusion=table(pred, testClass)
+
+sum=0
+for (i in 1:n){
+  trueClass=testClass[i]
+  p=prob.matrix[i,trueClass]
+  p=max(min(p,1-10^(-15)),10^(-15))
+  sum=sum+log(p)
+}
+
+L=-1/n*sum
+A=mean(pred==testClass)
+
+phrase1=paste("accuracy", round(A,4)*100, sep=" = ")
+phrase2=paste("logloss", round(L,3), sep=" = ")
+print(phrase1)
+print(phrase2)
+
+print("stratified sample, direct computations")
+
+
+fileName="prob_matrix.txt"
+out=paste(WDpath, fileName, sep="/")
+#write.table(prob.matrix, out, sep="\t")
+
+fileName="testClass.txt"
+out=paste(WDpath, fileName, sep="/")
+#write.table(testClass, out, sep="\t")
+
+fileName="confusion_matrix.txt"
+out=paste(WDpath, fileName, sep="/")
+#write.table(confusion, out, sep="\t")
