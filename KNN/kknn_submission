@@ -1,0 +1,42 @@
+##################
+#source file paths
+##################
+getData.path="C:/Users/cactus/Desktop/kaggle/code/get_data.txt"
+getTest.path="C:/Users/cactus/Desktop/kaggle/code/get_test.txt"
+
+#need to load Data and Test
+
+
+##################
+#settings
+##################
+#set k value of KNN:
+bestK=700
+#when do we use uniform probs for logloss?
+threshold=0
+#need to know that "class" is in col1, "image" is in col2
+##################
+
+set.seed(1)
+library(kknn)
+
+source(getData.path)
+source(getTest.path)
+
+fit=kknn(class~., Data[,-2], Test[,-1], k=bestK, distance=2, kernel="optimal", scale=TRUE)
+prob.matrix=fit$prob
+
+submit=prob.matrix
+rownames(submit)=Test[,1]
+numCat=ncol(prob.matrix)
+n=nrow(prob.matrix)
+
+for (i in 1:n){
+  index=which.max(prob.matrix[i,])
+  highestProb=prob.matrix[i,index]
+  if (highestProb<threshold){
+    submit[i,]=rep(1/numCat, numCat)
+  }
+}
+
+write.table(prob.matrix, "kknn_submission.txt", sep="\t")
