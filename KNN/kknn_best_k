@@ -1,0 +1,95 @@
+##################
+#source file paths
+##################
+getData.path="C:/Users/cactus/Desktop/kaggle/code/get_data.txt"
+getValidationSets.path="C:/Users/cactus/Desktop/kaggle/code/split_then_balance.txt"
+
+#needs to have produced trainData, testData
+
+
+##################
+#settings
+##################
+#automate values of k to use in loop
+#when do we use uniform probs?
+threshold=0
+#need to know that "class" is in col1, "image" is in col2
+##################
+
+set.seed(1)
+library(utils)
+library(kknn)
+
+source(getData.path)
+source(getValidationSets.path)
+
+testClass=testData[,1]
+categories=unique(Data$class)
+numCat=length(categories)
+
+best=matrix(0, 19, 2)
+
+pb=winProgressBar(title="progress bar", min=0, max=19, width=300)
+progress=0
+
+try=seq(610, 790, 10)
+
+for (m in 1:19){
+  fit=kknn(class~., trainData[,-2], testData[,-2], k=try[m], distance=2, kernel="optimal", scale=TRUE)
+  prob.matrix=fit$prob
+  pred=fit$fitted.values
+  n=nrow(prob.matrix)
+  highestProb=rep(0,n)
+  for (j in 1:n){
+    index=which.max(prob.matrix[j,])
+    highestProb[j]=prob.matrix[j,index]
+  }
+  results=matrix(0, numCat, 2)
+  for (i in 1:numCat){
+    ind=which(testClass==categories[i])
+    sum=0
+    for (k in ind){
+      if (highestProb[k]<threshold){
+        p=1/numCat
+      }
+      else {
+        trueClass=testData[k,1]
+        p=prob.matrix[k,trueClass]
+        p=max(min(p,1-10^(-15)),10^(-15))
+      }
+      sum=sum+log(p)
+    }
+    results[i,1]=-1/(length(ind))*sum
+    results[i,2]=mean(pred[ind]==testClass[ind])
+  }
+  best[m,1]=mean(results[,1])
+  best[m,2]=mean(results[,2])
+
+  progress=progress+1
+  setWinProgressBar(pb, progress, title=paste( round(progress/19*100, 0), "% done"))
+}
+close(pb)
+
+bestKa=which.max(best[,2])
+bestA=best[bestKa,2]
+bestKl=which.min(best[,1])
+bestL=best[bestKl,1]
+
+lower=min(min(best[,1]), min(best[,2]*100))
+upper=max(max(best[,1]), max(best[,2]*100))
+
+jpeg("kknn_best_k.jpg")
+plot(c(610, 790), c(lower-2, upper+5), xlab="value of k", ylab="", pch="")
+points(try, best[,2]*100)
+points(try, best[,1], col="red")
+points(try[bestKa], bestA*100, cex=2, pch=20, col="black")
+points(try[bestKl], bestL, cex=2, pch=20, col="red")
+phrase1=paste(try[bestKa], round(bestA,4)*100, sep=", ")
+phrase1=paste("accuracy", phrase1, sep=": ")
+phrase2=paste(try[bestKl], round(bestL,3), sep=", ")
+phrase2=paste("logloss", phrase2, sep=": ")
+text(700, upper+4, phrase1)
+text(700, upper+2, phrase2, col="red")
+dev.off()
+
+print("VS estimates, weights=uniform distribution")
