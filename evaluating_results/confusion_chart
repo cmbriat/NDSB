@@ -1,0 +1,41 @@
+#create confusion list from confusion matrix
+
+WDpath="C:/Users/cactus/Desktop/WD"
+
+#input required (confusion matrix):
+fileName="confusion_matrix.txt"
+input=paste(WDpath, fileName, sep="/")
+confusion=read.table(input, header=TRUE, sep="\t")
+
+######################################################################
+
+categories=rownames(confusion)
+numCat=length(categories)
+results=matrix(0, numCat^2, 3)
+colnames(results)=c("actual", "predicted", "count")
+
+start=1
+end=numCat
+for (i in 1:numCat){
+  results[start:end,1]=categories[i]
+  results[start:end,2]=categories
+  results[start:end,3]=confusion[,i]
+
+  start=end+1
+  end=end+numCat    
+}
+
+x=which(results[,3]==0)
+results2=results[-x,]
+
+#save outputs:
+
+#pairs that are never confused are not included
+fileName="confusion_chart.txt"
+output=paste(WDpath, fileName, sep="/")
+write.table(results2, output, sep="\t")
+
+#all info
+fileName="confusion_chart_0s.txt"
+output=paste(WDpath, fileName, sep="/")
+write.table(results, output, sep="\t")
