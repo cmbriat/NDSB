@@ -1,0 +1,7 @@
+path="C:/Users/cactus/Desktop/kaggle/data2"
+
+file="predictors2.csv"
+
+get_file=paste(path, file, sep="/")
+
+Test=read.csv(get_file)
