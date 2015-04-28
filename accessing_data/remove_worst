@@ -1,0 +1,26 @@
+#remove worst X predictors according to RF importance plot
+
+WDpath="C:/Users/cactus/Desktop/WD"
+
+#files required (RF importance list):
+
+fileName="importance.txt"
+input=paste(WDpath, fileName, sep="/")
+importance=read.table(input, header=TRUE, sep="\t")
+
+######################################################################
+
+#how many to remove?
+worst=190
+#########
+
+l=nrow(importance)
+range=(l-worst+1):l
+
+vector=as.character(importance[range,1])
+l=length(vector)
+
+for (i in 1:l){
+  Data[,vector[i]]=NULL
+  #Test[,vector[i]]=NULL
+}
