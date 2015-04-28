@@ -2,7 +2,7 @@
 
 WDpath="C:/Users/cactus/Desktop/WD"
 
-#files required (RF importance list):
+#inputs required (RF importance list):
 
 fileName="importance.txt"
 input=paste(WDpath, fileName, sep="/")
