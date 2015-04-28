@@ -19,39 +19,20 @@ file14="corecolor30_8.csv"
 file15="corecolor40_8.csv"
 
 
-get_file1=paste(path, file1, sep="/")
-get_file2=paste(path, file2, sep="/")
-get_file3=paste(path, file3, sep="/")
-get_file4=paste(path, file4, sep="/")
-get_file5=paste(path, file5, sep="/")
-get_file6=paste(path, file6, sep="/")
-get_file7=paste(path, file7, sep="/")
-get_file8=paste(path, file8, sep="/")
-get_file9=paste(path, file9, sep="/")
-get_file10=paste(path, file10, sep="/")
-get_file11=paste(path, file11, sep="/")
-get_file12=paste(path, file12, sep="/")
-get_file13=paste(path, file13, sep="/")
-get_file14=paste(path, file14, sep="/")
-get_file15=paste(path, file15, sep="/")
+for (i in 1:15){
+  file=paste("file", i, sep="")
+  get_file=paste(path, file, sep="/")
+  
+  X=paste("Data", i, sep="")
+  X=paste(X, "=read.csv(get_file)", sep="")
+  eval(parse(text=X))
+}
 
 
-Data1=read.csv(get_file1)
-Data2=read.csv(get_file2)
-Data3=read.csv(get_file3)
-Data4=read.csv(get_file4)
-Data5=read.csv(get_file5)
-Data6=read.csv(get_file6)
-Data7=read.csv(get_file7)
-Data8=read.csv(get_file8)
-Data9=read.csv(get_file9)
-Data10=read.csv(get_file10)
-Data11=read.csv(get_file11)
-Data12=read.csv(get_file12)
-Data13=read.csv(get_file13)
-Data14=read.csv(get_file14)
-Data15=read.csv(get_file15)
+Corecolors=cbind(Data1, Data2[,c(-1,-2)])
 
-##################################################
-
-Corecolors=cbind(Data1, Data2[,c(-1,-2)], Data3[,c(-1,-2)], Data4[,c(-1,-2)], Data5[,c(-1,-2)], Data6[,c(-1,-2)], Data7[,c(-1,-2)], Data8[,c(-1,-2)], Data9[,c(-1,-2)], Data10[,c(-1,-2)], Data11[,c(-1,-2)], Data12[,c(-1,-2)], Data13[,c(-1,-2)], Data14[,c(-1,-2)], Data15[,c(-1,-2)])
+for (j in 3:15){
+  Dat=paste("Data", j, sep="")
+  Dat=paste(Dat, "[,c(-1,-2)]", sep="")
+  Corecolors=cbind(Corecolors, eval(parse(text=Dat)))
+}
