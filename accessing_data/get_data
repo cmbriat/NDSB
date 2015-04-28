@@ -39,7 +39,6 @@ Data9=read.csv(get_file9)
 ##################################################
 
 Datac=cbind(Data1, Data2[,c(-1,-2)], Data3[,c(-1,-2)], Data4[,c(-1,-2)], Data5[,c(-1,-2)], Data6[,c(-1,-2)], Data7[,c(-1,-2)], Data8[,c(-1,-2)], Data9[,c(-1,-2)])
-
 Data=cbind(Shapes, Datac[,c(-1,-2)])
 
 
