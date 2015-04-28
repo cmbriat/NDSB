@@ -1,4 +1,4 @@
-#create a list: for each image, what was the predicted class?
+#create a list: for each image, what was the true class and the predicted class?
 #required to create folders of confused images
 
 WDpath="C:/Users/cactus/Desktop/WD"
