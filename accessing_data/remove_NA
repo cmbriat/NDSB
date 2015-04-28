@@ -1,0 +1,14 @@
+#remove any rows of Data that are missing
+#use this if necessary when testing, but make sure there are no NA when fitting models
+
+l=length(names(Data))
+x=c(0)
+
+for (i in 1:l){
+  if (is.na(Data[1,i])) {
+    if (x[1]==0) {x[1]=i}
+    else {x=c(x, i)}
+  }
+}
+
+Data=Data[,-x]
