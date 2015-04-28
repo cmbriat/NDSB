@@ -1,1 +1,1 @@
-uses randomForest package
+uses randomForest library
