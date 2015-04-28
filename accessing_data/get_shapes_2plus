@@ -1,0 +1,79 @@
+path="C:/Users/cactus/Desktop/kaggle/data2"
+
+file1="shape0.csv"
+
+file2="shapeI1.csv"
+file3="shapeI2.csv"
+file4="shapeI4.csv"
+file5="shapeI6.csv"
+file6="shapeI8.csv"
+file7="shapeI10.csv"
+file8="shapeI12.csv"
+file9="shapeI14.csv"
+file10="shapeI16.csv"
+file11="shapeI18.csv"
+file12="shapeI20.csv"
+
+file13="shapeO1.csv"
+file14="shapeO2.csv"
+file15="shapeO4.csv"
+file16="shapeO6.csv"
+file17="shapeO8.csv"
+file18="shapeO10.csv"
+file19="shapeO12.csv"
+file20="shapeO14.csv"
+file21="shapeO16.csv"
+file22="shapeO18.csv"
+file23="shapeO20.csv"
+
+get_file1=paste(path, file1, sep="/")
+get_file2=paste(path, file2, sep="/")
+get_file3=paste(path, file3, sep="/")
+get_file4=paste(path, file4, sep="/")
+get_file5=paste(path, file5, sep="/")
+get_file6=paste(path, file6, sep="/")
+get_file7=paste(path, file7, sep="/")
+get_file8=paste(path, file8, sep="/")
+get_file9=paste(path, file9, sep="/")
+get_file10=paste(path, file10, sep="/")
+get_file11=paste(path, file11, sep="/")
+get_file12=paste(path, file12, sep="/")
+get_file13=paste(path, file13, sep="/")
+get_file14=paste(path, file14, sep="/")
+get_file15=paste(path, file15, sep="/")
+get_file16=paste(path, file16, sep="/")
+get_file17=paste(path, file17, sep="/")
+get_file18=paste(path, file18, sep="/")
+get_file19=paste(path, file19, sep="/")
+get_file20=paste(path, file20, sep="/")
+get_file21=paste(path, file21, sep="/")
+get_file22=paste(path, file22, sep="/")
+get_file23=paste(path, file23, sep="/")
+
+Data1=read.csv(get_file1)
+Data2=read.csv(get_file2)
+Data3=read.csv(get_file3)
+Data4=read.csv(get_file4)
+Data5=read.csv(get_file5)
+Data6=read.csv(get_file6)
+Data7=read.csv(get_file7)
+Data8=read.csv(get_file8)
+Data9=read.csv(get_file9)
+Data10=read.csv(get_file10)
+Data11=read.csv(get_file11)
+Data12=read.csv(get_file12)
+Data13=read.csv(get_file13)
+Data14=read.csv(get_file14)
+Data15=read.csv(get_file15)
+Data16=read.csv(get_file16)
+Data17=read.csv(get_file17)
+Data18=read.csv(get_file18)
+Data19=read.csv(get_file19)
+Data20=read.csv(get_file20)
+Data21=read.csv(get_file21)
+Data22=read.csv(get_file22)
+Data23=read.csv(get_file23)
+
+##################################################
+
+Shapes=cbind(Data1, Data2[,c(-1,-2)], Data3[,c(-1,-2)], Data4[,c(-1,-2)], Data5[,c(-1,-2)], Data6[,c(-1,-2)], Data7[,c(-1,-2)], Data8[,c(-1,-2)], Data9[,c(-1,-2)], Data10[,c(-1,-2)], Data11[,c(-1,-2)], Data12[,c(-1,-2)], Data13[,c(-1,-2)], Data14[,c(-1,-2)], Data15[,c(-1,-2)], Data16[,c(-1,-2)], Data17[,c(-1,-2)], Data18[,c(-1,-2)], Data19[,c(-1,-2)], Data20[,c(-1,-2)], Data21[,c(-1,-2)], Data22[,c(-1,-2)], Data23[,c(-1,-2)])
