@@ -1,4 +1,4 @@
-#create folds needed for cross-validation:
+#create folds needed for cross-validation
 #divide each class evenly into numFolds folds
 
 ######################################################################
