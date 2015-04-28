@@ -1,4 +1,5 @@
-#create confusion list from confusion matrix
+#create confusion list from confusion matrix:
+#for each pair of classes, how many images of class "actual" where predicted as class "predicted"?
 
 WDpath="C:/Users/cactus/Desktop/WD"
 
