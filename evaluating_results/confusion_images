@@ -1,0 +1,103 @@
+#create folders of images that are mistaken for one another
+
+WDpath="C:/Users/cactus/Desktop/WD"
+
+#inputs required (confusion chart and "check"):
+
+fileName="confusion_chart.txt"
+input=paste(WDpath, fileName, sep="/")
+Confusion=read.table(input, header=TRUE, sep="\t")
+
+fileName="check.txt"
+input=paste(WDpath, fileName, sep="/")
+Check=read.table(input, header=TRUE, sep="\t")
+
+################################################################
+
+#create folders when there is a minimum of how many misclassification?
+maxSize=20
+############
+
+fromMain="C:/Users/cactus/Desktop/kaggle/images"
+toMain="C:/Users/cactus/Desktop/confusedPairs"
+
+classes=matrix(0, 1, 2)
+colnames(classes)=c("actual", "predicted")
+
+#which classes have lots of confusion?
+for (k in 1:nrow(Confusion)){
+  if (Confusion$count[k]>=maxSize){
+    add=Confusion[k,1:2]
+    classes=rbind(classes, add)
+  }
+}
+classes=classes[-1,]
+
+################################################################
+#count keeps track of one-way confusion
+count=0
+
+for (c in 1:nrow(classes)){
+  class1=classes[c, 1]
+  class2=classes[c, 2]
+
+  #ignore successes (we want misclassifications)
+  if (class1==class2){
+    next
+  }
+
+  #check if we already dealt with this pair
+  #(classes has redundancy)
+  checkName=paste(class2, class1, sep="_AND_")
+  checkSub=paste(toMain, checkName, sep="/")
+  if (file.exists(checkSub)){
+    next
+  }
+
+  #create folders for pair of confused classes
+  pairName=paste(class1, class2, sep="_AND_")
+  toSub=paste(toMain, pairName, sep="/")
+  toClass1=paste(toSub, class1, sep="/")
+  toClass2=paste(toSub, class2, sep="/")
+  fromClass1=paste(fromMain, class1, sep="/")
+  fromClass2=paste(fromMain, class2, sep="/")
+  dir.create(toSub)
+  dir.create(toClass1)
+  dir.create(toClass2)
+
+  #identify and rename folders for one-way confusions
+  ind1=which(Check[,2]==class1 & Check[,3]==class2)
+  images1=Check[ind1, 1]
+  ind2=which(Check[,2]==class2 & Check[,3]==class1)
+  #skip is used in later loop
+  skip=FALSE
+    if (length(ind2)==0){
+      new1=paste(toSub, "#", sep="")
+      new2=paste(toClass2, "#", sep="")
+      file.rename(toClass2, new2)
+      file.rename(toSub, new1)
+      count=count+1
+      skip=TRUE
+    }
+    else {
+      images2=Check[ind2, 1]
+    }
+
+  #move images
+  for (i in images1){
+    image=paste(fromClass1, i, sep="/")
+    image=paste(image, ".jpg", sep="")
+    file.copy(image, toClass1)
+  }
+  for (j in images2){
+    if (skip==TRUE){
+      break
+    }
+    image=paste(fromClass2, j, sep="/")
+    image=paste(image, ".jpg", sep="")
+    file.copy(image, toClass2)
+  }
+}
+
+phrase=paste("number of one-way confusion:", count, sep=" ")
+print(phrase)
