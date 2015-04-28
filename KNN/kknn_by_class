@@ -1,0 +1,82 @@
+##################
+#source file paths
+##################
+getData.path="C:/Users/cactus/Desktop/kaggle/code/get_data.txt"
+getValidationSets.path="C:/Users/cactus/Desktop/kaggle/code/split_then_balance.txt"
+
+#needs to have loaded original dataset, called Data
+#needs to have produced trainData, testData
+#needs categories, numCat, dist from ValidationSets
+
+
+##################
+#settings
+##################
+#set k value of KNN:
+bestK=700
+#when do we use uniform probs?
+threshold=0
+#assumes "class" is col 1, "image" is col 2
+##################
+
+set.seed(1)
+library(kknn)
+
+source(getData.path)
+source(getValidationSets.path)
+
+testClass=testData[,1]
+
+fit=kknn(class~., trainData[,-2], testData[,-2], k=bestK, distance=2, kernel="optimal", scale=TRUE)
+prob.matrix=fit$prob
+pred=fit$fitted.values
+
+n=nrow(prob.matrix)
+highestProb=rep(0,n)
+
+for (j in 1:n){
+  index=which.max(prob.matrix[j,])
+  highestProb[j]=prob.matrix[j,index]
+}
+
+results=matrix(0, numCat, 7)
+rownames(results)=categories
+colnames(results)=c("logloss", "accuracy", "test_class_total", "conf_mean", "conf_sd", "conf_min", "conf_max")
+
+for (i in 1:numCat){
+  ind=which(testClass==categories[i])
+  sum=0
+  for (k in ind){
+    if (highestProb[k]<threshold){
+      p=1/numCat
+    }
+    else {
+      trueClass=testData[k,1]
+      p=prob.matrix[k,trueClass]
+      p=max(min(p,1-10^(-15)),10^(-15))
+    }
+    sum=sum+log(p)
+  }
+  results[i,1]=-1/(length(ind))*sum
+  summary=summary(highestProb[ind])
+  results[i,2]=mean(pred[ind]==testClass[ind])
+  results[i,3]=length(ind)
+  results[i,4]=summary[4]
+  results[i,5]=sd(highestProb[ind])
+  results[i,6]=summary[1]
+  results[i,7]=summary[6]
+}
+
+WA=mean(results[,2])
+WL=mean(results[,1])
+A=sum(results[,2]*dist)/sum(dist)
+L=sum(results[,1]*dist)/sum(dist)
+
+phrase1=paste("weighted accuracy", round(WA,4)*100, sep=" = ")
+phrase2=paste("weighted logloss", round(WL,3), sep=" = ")
+print(phrase1)
+print(phrase2)
+
+print("VS estimates, weights=uniform distribution")
+
+#write.table(results, "kknn_summary_by_class_VS.txt", sep="\t")
